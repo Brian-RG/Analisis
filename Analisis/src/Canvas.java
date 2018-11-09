@@ -1,11 +1,16 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotionListener {
@@ -15,9 +20,13 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 	private int inx,iny, fx,fy;
 	private BarraHerramientas bh;
 	private boolean drawing;
+	private Image Loaded;
+	private Figura current;
 	
 	public Canvas(float x, float y,BarraHerramientas o) {
 		super();
+		Loaded=null;
+		this.setBackground(Color.WHITE);
 		drawing=false;
 		this.setPreferredSize(new Dimension(600,600));
 		this.bh=o;
@@ -36,8 +45,44 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 		repaint();
 	}
 	
+	public void Reset() {
+		this.Loaded=null;
+		this.figuras.clear();
+		removeAll();
+	}
+	
+	public void loadImage() {
+		
+		try {
+			JFileChooser fc = new JFileChooser();
+			int r=fc.showOpenDialog(this);
+			if(r==JFileChooser.APPROVE_OPTION){
+				String path= fc.getSelectedFile().getAbsolutePath();
+				
+				Loaded=new ImageIcon(path).getImage();
+			
+			}
+			//path+="\\src\\";
+			//String name=JOptionPane.showInputDialog("Escribe el nombre del archivo a cargar");
+
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+		figuras.clear();
+	}
+	
+	public Figura getCurrent() {
+		return this.current;
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
+		if(Loaded!=null) {
+			g.drawImage(Loaded,0,0,this);
+		}
+		
 		for(Figura f:figuras) {
 			f.DibujaFigura(g);
 		}
@@ -67,8 +112,9 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 			else if(bh.getSelected()==3) {
 				if(bh.getColor()!=null) {
 					g.setColor(bh.getColor());
-					g.drawLine(inx, iny, fx, fy);
 				}
+					g.drawLine(inx, iny, fx, fy);
+				
 				
 			}
 		}
@@ -80,6 +126,11 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 	public void mouseDragged(MouseEvent e) {
 		fx=e.getX();
 		fy=e.getY();
+		if(bh.getSelected()==5) {
+			this.current.setPos(fx-inx,fy-iny);
+			inx=fx;
+			iny=fy;
+		}
 	}
 
 	@Override
@@ -89,14 +140,22 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		inx=fx=e.getX();
-		iny=fy=e.getY();
-		
-		drawing=true;
+		if(bh.getSelected()==5) {
+			inx=fx=e.getX();
+			iny=fy=e.getY();
+		}
+		else {
+			inx=fx=e.getX();
+			iny=fy=e.getY();
+			
+			drawing=true;
+		}
+
 	}
 
 	@Override
@@ -105,19 +164,21 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 		fx=e.getX();
 		fy=e.getY();
 		if(bh.getSelected()==0) {
-			figuras.add(new Figura(4,fx,fy,90,bh.getColor(),inx,iny));
+			this.current=new Figura(4,fx,fy,0,bh.getColor(),inx,iny);
+			figuras.add(current);
 		}
 		else if(bh.getSelected()==1) {
-			figuras.add(new Figura(0,fx,fy,90,bh.getColor(),inx,iny));
+			this.current=new Figura(0,fx,fy,0,bh.getColor(),inx,iny);
+			figuras.add(current);
 		}
 		else if(bh.getSelected()==2) {
-			figuras.add(new Figura(3,fx,fy,90,bh.getColor(),inx,iny));
+			this.current=new Figura(3,fx,fy,0,bh.getColor(),inx,iny);
+			figuras.add(current);
 		}
 		else if(bh.getSelected()==3) {
-			figuras.add(new Figura(1,fx,fy,90,bh.getColor(),inx,iny));
+			this.current=new Figura(1,fx,fy,0,bh.getColor(),inx,iny);
+			figuras.add(current);
 		}
-		
-		
 	}
 
 	@Override
@@ -130,6 +191,14 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 		// TODO Auto-generated method stub
 	}
 
+	public void SetFondo(Color c) {
+		this.setBackground(c);
+	}
+	
+	public Color getFondo() {
+		return this.getBackground();
+	}
+	
 	@Override
 	public void run() {
         try{
