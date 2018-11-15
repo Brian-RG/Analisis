@@ -22,21 +22,42 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 	private boolean drawing;
 	private Image Loaded;
 	private Figura current;
+	private Sistema s;
 	
-	public Canvas(float x, float y,BarraHerramientas o) {
+	public Canvas(float x, float y,BarraHerramientas o,Sistema s) {
 		super();
+		this.s=s;
 		Loaded=null;
 		this.setBackground(Color.WHITE);
 		drawing=false;
-		this.setPreferredSize(new Dimension(600,600));
+		this.setSize(new Dimension(520,400));
 		this.bh=o;
 		Thread t = new Thread(this);
 		t.start();
-		figuras= new ArrayList();
+		figuras= new ArrayList<Figura>();
 		this.x=x;
 		this.y=y;
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+	}
+	
+	public void setCanvasSize(int x, int y) {
+		if(x>=this.getWidth() && y>=this.getHeight())
+		{
+		this.setSize(x,y);
+		s.setSize(new Dimension(x,y));
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "ERROR, minimum size: 520x400px", "ERROR", 0);
+			this.setSize(520,400);
+			s.setSize(new Dimension(520,400));
+		}
+	}
+	
+	public void undo() {
+		if(!figuras.isEmpty()) {
+			figuras.remove(figuras.size()-1);
+		}
 	}
 	
 	public void deleteall() {
@@ -140,7 +161,6 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
 	}
 
 	@Override

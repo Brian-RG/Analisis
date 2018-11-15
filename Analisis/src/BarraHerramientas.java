@@ -24,7 +24,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class BarraHerramientas extends JPanel implements ActionListener, ChangeListener {
-    private JButton circulo, rectangulo,triangulo,line,clear,co,sel,save,load,move,canvascolor;
+    private JButton circulo, rectangulo,triangulo,line,clear,co,sel,save,load,move,canvascolor,CanvasSize,undo,nuevo;
     private Color current;
     private JColorChooser color;
     private int opcion=0;
@@ -38,7 +38,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         super();
         this.opcion=-1;
         this.setBackground(Color.BLUE);
-        this.setPreferredSize(new Dimension(1000,100));
+        this.setPreferredSize(new Dimension(520,100));
         SpinnerModel sm = new SpinnerNumberModel(0, 0, 360, 1);
         this.rot=new JSpinner(sm);
         this.rot.addChangeListener(this);
@@ -46,7 +46,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         this.circulo=new JButton();
         String p= new File("").getAbsolutePath();
         p+="\\src\\r";
-        this.circulo.setIcon(new ImageIcon(new ImageIcon(p+"\\a.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.circulo.setIcon(new ImageIcon(new ImageIcon(p+"\\circle.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.circulo.addActionListener(this);
         this.circulo.setBackground(Color.black);
         
@@ -57,7 +57,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         this.add(move);
         
         this.sel=new JButton();
-        this.sel.setIcon(new ImageIcon(new ImageIcon(p+"\\m.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.sel.setIcon(new ImageIcon(new ImageIcon(p+"\\Selection.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.sel.addActionListener(this);
         this.sel.setBackground(Color.black);
         this.add(this.sel);
@@ -65,34 +65,44 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         
         this.add(this.circulo);
         this.rectangulo=new JButton();
-        this.rectangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\s.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.rectangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\rectangulo.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.rectangulo.setBackground(Color.black);
         this.rectangulo.addActionListener(this);
         this.add(this.rectangulo);
         this.triangulo=new JButton();
-        this.triangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\t.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.triangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\triangulo.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.triangulo.addActionListener(this);
         this.triangulo.setBackground(Color.black);
         this.add(triangulo);
         this.line=new JButton();
-        this.line.setIcon(new ImageIcon(new ImageIcon(p+"\\li.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.line.setIcon(new ImageIcon(new ImageIcon(p+"\\line.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.line.setBackground(Color.WHITE);
         this.line.addActionListener(this);
         this.add(line);
         
-        co= new JButton();
+        co= new JButton(" ");
         //Color s= null;
         //co.setBackground(s);
         current=null;
         co.addActionListener(this);
-        co.setBounds(co.getX(), co.getY(), 30, 30);
         this.color= new JColorChooser();
-
+        
+        
+        
+        this.undo= new JButton("Undo");
+        undo.addActionListener(this);
+        this.add(undo);
+        
         clear= new JButton("Clear");
         clear.addActionListener(this);
         this.add(clear);
         
         this.add(co);
+        
+        this.nuevo=new JButton("New");
+        this.nuevo.addActionListener(this);
+        this.add(nuevo);
+        
         this.save= new JButton("Save");
         this.save.addActionListener(this);
         this.add(save);
@@ -103,6 +113,10 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         this.canvascolor= new JButton("Canvas Color");
         this.canvascolor.addActionListener(this);
         this.add(canvascolor);
+        
+        this.CanvasSize= new JButton("Change Canvas Size");
+        this.CanvasSize.addActionListener(this);
+        this.add(CanvasSize);
 	}
 	
 	public void addCanvas(Canvas e) {
@@ -135,7 +149,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 			this.opcion=3;
 		}
 		else if(e.getSource()==this.co) {
-			current=color.showDialog(null,"change",co.getBackground());
+			current=color.showDialog(null,"change color",co.getBackground());
 			co.setBackground(current);
 		}
 		else if(e.getSource()==this.move) {
@@ -150,6 +164,17 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 		else if(e.getSource()==this.canvascolor) {
 			Color k=color.showDialog(null,"Canvas", c.getFondo());
 			c.SetFondo(k);
+		}
+		else if(e.getSource()==this.CanvasSize) {
+			int x=Integer.parseInt(JOptionPane.showInputDialog(this, "Insert X", "Change Canvas Size", 3));
+			int y=Integer.parseInt(JOptionPane.showInputDialog(this, "Insert y", "Change Canvas Size", 3));
+			c.setCanvasSize(x,y);
+		}
+		else if(e.getSource()==this.undo) {
+			c.undo();
+		}
+		else if(e.getSource()==this.nuevo) {
+			
 		}
 		
 	}
