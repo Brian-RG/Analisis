@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -22,6 +23,15 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 public class BarraHerramientas extends JPanel implements ActionListener, ChangeListener {
     private JButton circulo, rectangulo,triangulo,line,clear,co,sel,save,load,move,canvascolor,CanvasSize,undo,nuevo;
@@ -46,19 +56,20 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         this.add(rot);
         this.circulo=new JButton();
         String p= new File("").getAbsolutePath();
-        p+="\\src\\r";
-        this.circulo.setIcon(new ImageIcon(new ImageIcon(p+"\\circle.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        System.out.println(p);
+        p+="/Analisis/src/r";
+        this.circulo.setIcon(new ImageIcon(new ImageIcon(p+"/circle.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.circulo.addActionListener(this);
         this.circulo.setBackground(Color.black);
         
         this.move= new JButton();
-        this.move.setIcon(new ImageIcon(new ImageIcon(p+"\\moves.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.move.setIcon(new ImageIcon(new ImageIcon(p+"/moves.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.move.addActionListener(this);
         this.move.setBackground(Color.black);
         this.add(move);
         
         this.sel=new JButton();
-        this.sel.setIcon(new ImageIcon(new ImageIcon(p+"\\Selection.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.sel.setIcon(new ImageIcon(new ImageIcon(p+"/Selection.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.sel.addActionListener(this);
         this.sel.setBackground(Color.black);
         this.add(this.sel);
@@ -66,17 +77,17 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         
         this.add(this.circulo);
         this.rectangulo=new JButton();
-        this.rectangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\rectangulo.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.rectangulo.setIcon(new ImageIcon(new ImageIcon(p+"/rectangulo.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.rectangulo.setBackground(Color.black);
         this.rectangulo.addActionListener(this);
         this.add(this.rectangulo);
         this.triangulo=new JButton();
-        this.triangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\triangulo.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.triangulo.setIcon(new ImageIcon(new ImageIcon(p+"/triangulo.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.triangulo.addActionListener(this);
         this.triangulo.setBackground(Color.black);
         this.add(triangulo);
         this.line=new JButton();
-        this.line.setIcon(new ImageIcon(new ImageIcon(p+"\\line.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.line.setIcon(new ImageIcon(new ImageIcon(p+"/line.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.line.setBackground(Color.WHITE);
         this.line.addActionListener(this);
         this.add(line);
@@ -185,6 +196,8 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 	public void saveCanvas() {
 		c.setChange(false);
 		BufferedImage image=new BufferedImage(c.getWidth(), c.getHeight(),BufferedImage.TYPE_INT_RGB);
+		float width = image.getWidth();
+		float height = image.getHeight();
 		Graphics2D g2=(Graphics2D)image.getGraphics();
 		c.paintComponent(g2);
 		try {
@@ -195,7 +208,16 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 				//f+="\\src\\";
 //				String name= JOptionPane.showInputDialog("Insert a name for the image");
 				ImageIO.write(image, "png", new File(f));
-				System.out.println(f);
+				
+				PDDocument document = new PDDocument();
+				PDPage page = new PDPage(new PDRectangle(width, height));
+				document.addPage(page);
+				PDImageXObject img = PDImageXObject.createFromFile(f, document);
+				PDPageContentStream contentStream = new PDPageContentStream(document, page);
+				contentStream.drawImage(img, 0, 0);
+				contentStream.close();
+				document.save("exported"+".pdf");;
+				document.close();
 			}
 			
 		} catch (Exception e) {
