@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -33,6 +32,8 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+
+
 public class BarraHerramientas extends JPanel implements ActionListener, ChangeListener {
     private JButton circulo, rectangulo,triangulo,line,clear,co,sel,save,load,move,canvascolor,CanvasSize,undo,nuevo;
     private Color current;
@@ -48,7 +49,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         super();
         this.s=s;
         this.opcion=-1;
-        this.setBackground(Color.BLUE);
+        this.setBackground(new Color(240,248,255));
         this.setPreferredSize(new Dimension(520,100));
         SpinnerModel sm = new SpinnerNumberModel(0, 0, 360, 1);
         this.rot=new JSpinner(sm);
@@ -56,20 +57,19 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         this.add(rot);
         this.circulo=new JButton();
         String p= new File("").getAbsolutePath();
-        System.out.println(p);
-        p+="/Analisis/src/r";
-        this.circulo.setIcon(new ImageIcon(new ImageIcon(p+"/circle.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        p+="\\src\\r";
+        this.circulo.setIcon(new ImageIcon(new ImageIcon(p+"\\circle.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.circulo.addActionListener(this);
         this.circulo.setBackground(Color.black);
         
         this.move= new JButton();
-        this.move.setIcon(new ImageIcon(new ImageIcon(p+"/moves.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.move.setIcon(new ImageIcon(new ImageIcon(p+"\\moves.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.move.addActionListener(this);
         this.move.setBackground(Color.black);
         this.add(move);
         
         this.sel=new JButton();
-        this.sel.setIcon(new ImageIcon(new ImageIcon(p+"/Selection.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.sel.setIcon(new ImageIcon(new ImageIcon(p+"\\Selection.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.sel.addActionListener(this);
         this.sel.setBackground(Color.black);
         this.add(this.sel);
@@ -77,17 +77,17 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
         
         this.add(this.circulo);
         this.rectangulo=new JButton();
-        this.rectangulo.setIcon(new ImageIcon(new ImageIcon(p+"/rectangulo.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.rectangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\rectangulo.jpg").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.rectangulo.setBackground(Color.black);
         this.rectangulo.addActionListener(this);
         this.add(this.rectangulo);
         this.triangulo=new JButton();
-        this.triangulo.setIcon(new ImageIcon(new ImageIcon(p+"/triangulo.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.triangulo.setIcon(new ImageIcon(new ImageIcon(p+"\\triangulo.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.triangulo.addActionListener(this);
         this.triangulo.setBackground(Color.black);
         this.add(triangulo);
         this.line=new JButton();
-        this.line.setIcon(new ImageIcon(new ImageIcon(p+"/line.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
+        this.line.setIcon(new ImageIcon(new ImageIcon(p+"\\line.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT)));
         this.line.setBackground(Color.WHITE);
         this.line.addActionListener(this);
         this.add(line);
@@ -195,34 +195,67 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 	
 	public void saveCanvas() {
 		c.setChange(false);
-		BufferedImage image=new BufferedImage(c.getWidth(), c.getHeight(),BufferedImage.TYPE_INT_RGB);
-		float width = image.getWidth();
-		float height = image.getHeight();
-		Graphics2D g2=(Graphics2D)image.getGraphics();
-		c.paintComponent(g2);
-		try {
-			fc= new JFileChooser();
-			int r=fc.showSaveDialog(this);
-			if(r==JFileChooser.APPROVE_OPTION) {
-				String f= fc.getSelectedFile().getAbsolutePath();
-				//f+="\\src\\";
-//				String name= JOptionPane.showInputDialog("Insert a name for the image");
-				ImageIO.write(image, "png", new File(f));
-				
-				PDDocument document = new PDDocument();
-				PDPage page = new PDPage(new PDRectangle(width, height));
-				document.addPage(page);
-				PDImageXObject img = PDImageXObject.createFromFile(f, document);
-				PDPageContentStream contentStream = new PDPageContentStream(document, page);
-				contentStream.drawImage(img, 0, 0);
-				contentStream.close();
-				document.save("exported"+".pdf");;
-				document.close();
-			}
-			
-		} catch (Exception e) {
-			System.out.println(e);
+		String[] opcion= {"jpg","png","Exportar como pdf"};
+		int rpta=JOptionPane.showOptionDialog(this, "Selecciona el formato.", "Save", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, opcion, opcion[0]);
+		if(rpta==JOptionPane.CLOSED_OPTION) {
+			c.setChange(true);
 		}
+		else {
+			BufferedImage image=new BufferedImage(c.getWidth(), c.getHeight(),BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2=(Graphics2D)image.getGraphics();
+			c.paintComponent(g2);
+			float width= image.getWidth();
+			float height = image.getHeight();
+			try {
+				fc= new JFileChooser();
+				int r=fc.showSaveDialog(this);
+				if(r==JFileChooser.APPROVE_OPTION) {
+					String f= fc.getSelectedFile().getAbsolutePath();
+					//f+="\\src\\";
+//					String name= JOptionPane.showInputDialog("Insert a name for the image");
+					switch(rpta) {
+						case 0:
+							f+=".jpg";
+							ImageIO.write(image, "png", new File(f));
+							
+							
+							break;
+						case 1:
+							
+							f+=".png";
+							ImageIO.write(image, "png", new File(f));
+							
+							
+							break;
+						case 2:
+							String k = new File("").getAbsolutePath();
+							k+="temporal.png";
+							ImageIO.write(image, "png",new File(k));
+							File z= new File(k);
+							PDDocument document = new PDDocument();
+							PDPage page = new PDPage(new PDRectangle(width, height));
+							document.addPage(page);
+							PDImageXObject img = PDImageXObject.createFromFile(k, document);
+							PDPageContentStream contentStream = new PDPageContentStream(document, page);
+							contentStream.drawImage(img, 0, 0);
+							contentStream.close();
+							document.save(f+".pdf");;
+							document.close();
+							z.delete();
+							break;
+						default:
+							break;
+					}
+					//System.out.println(f);
+					
+				
+				}
+				
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		
 	}
 
 	@Override
