@@ -31,11 +31,12 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
     private Canvas c;
     private JFileChooser fc;
     private JSpinner rot;
+    private Sistema s;
     
     
-	public BarraHerramientas() {
-		
+	public BarraHerramientas(Sistema s) {
         super();
+        this.s=s;
         this.opcion=-1;
         this.setBackground(Color.BLUE);
         this.setPreferredSize(new Dimension(520,100));
@@ -157,6 +158,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 		}
 		else if(e.getSource()==this.save) {
 			saveCanvas();
+
 		}
 		else if(e.getSource()==this.load) {
 			c.loadImage();
@@ -174,14 +176,14 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 			c.undo();
 		}
 		else if(e.getSource()==this.nuevo) {
-			
+			s.nuevo();
 		}
 		
 	}
 
 	
-	private void saveCanvas() {
-
+	public void saveCanvas() {
+		c.setChange(false);
 		BufferedImage image=new BufferedImage(c.getWidth(), c.getHeight(),BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2=(Graphics2D)image.getGraphics();
 		c.paintComponent(g2);

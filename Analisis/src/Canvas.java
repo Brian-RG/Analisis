@@ -23,14 +23,15 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 	private Image Loaded;
 	private Figura current;
 	private Sistema s;
+	private boolean change;
 	
-	public Canvas(float x, float y,BarraHerramientas o,Sistema s) {
+	public Canvas(int x, int y,BarraHerramientas o,Sistema s) {
 		super();
 		this.s=s;
 		Loaded=null;
 		this.setBackground(Color.WHITE);
 		drawing=false;
-		this.setSize(new Dimension(520,400));
+		this.setPreferredSize(new Dimension(x,y));
 		this.bh=o;
 		Thread t = new Thread(this);
 		t.start();
@@ -39,6 +40,14 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 		this.y=y;
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+	}
+	
+	public void setChange(boolean ch) {
+		this.change=ch;
+	}
+	
+	public boolean getChange() {
+		return this.change;
 	}
 	
 	public void setCanvasSize(int x, int y) {
@@ -161,10 +170,12 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		change=true;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		change=true;
 		if(bh.getSelected()==5) {
 			inx=fx=e.getX();
 			iny=fy=e.getY();
