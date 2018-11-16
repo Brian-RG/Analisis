@@ -1,7 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.crypto.spec.GCMParameterSpec;
 import javax.swing.*;
 
 public class Sistema extends JFrame{
@@ -33,8 +32,8 @@ public class Sistema extends JFrame{
 				if(o[r]=="yes") {
 					b.saveCanvas();
 				}
-				int x=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaño en x(px) del nuevo canvas"));
-				int y=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaño en y(px) del nuevo canvas"));
+				int x=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaï¿½o en x(px) del nuevo canvas"));
+				int y=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaï¿½o en y(px) del nuevo canvas"));
 				this.remove(c);
 				c=null;
 				System.gc();

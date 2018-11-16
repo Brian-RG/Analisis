@@ -146,7 +146,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==this.rectangulo) {
-			opcion=0;
+			this.opcion=0;
 		}
 		else if (e.getSource()==this.circulo) {
 			this.opcion=1;
@@ -189,9 +189,20 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 		else if(e.getSource()==this.nuevo) {
 			s.nuevo();
 		}
+		else if(e.getSource()==this.sel) {
+			this.opcion=6;
+		}
 		
 	}
 
+	public BufferedImage getCanvasImage() {
+		BufferedImage image = new BufferedImage(c.getWidth(), c.getHeight(),BufferedImage.TYPE_INT_RGB);
+		Graphics2D g3 = (Graphics2D) image.getGraphics();
+		c.paintComponent(g3);
+		//ImageIO.write(image,"png",new File(f));
+		g3.dispose();
+		return image;
+	}
 	
 	public void saveCanvas() {
 		c.setChange(false);
@@ -204,6 +215,7 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 			BufferedImage image=new BufferedImage(c.getWidth(), c.getHeight(),BufferedImage.TYPE_INT_RGB);
 			Graphics2D g2=(Graphics2D)image.getGraphics();
 			c.paintComponent(g2);
+			g2.dispose();
 			float width= image.getWidth();
 			float height = image.getHeight();
 			try {

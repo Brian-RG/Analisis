@@ -1,10 +1,15 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -90,7 +95,7 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 				String path= fc.getSelectedFile().getAbsolutePath();
 				
 				Loaded=new ImageIcon(path).getImage();
-			
+				this.setCanvasSize(Loaded.getWidth(null), Loaded.getHeight(null));
 			}
 			//path+="\\src\\";
 			//String name=JOptionPane.showInputDialog("Escribe el nombre del archivo a cargar");
@@ -144,12 +149,23 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 					g.setColor(bh.getColor());
 				}
 					g.drawLine(inx, iny, fx, fy);
-				
-				
+			}
+			else if(bh.getSelected()==6) {
+				/* STROKE
+				Graphics2D g2=(Graphics2D) g;
+				System.out.println(g2.getStroke());
+				Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0); g2.setStroke(dashed);
+				g2.setStroke(dashed);
+				*/
 			}
 		}
 
 		
+	}
+	
+	private BufferedImage cropImage(BufferedImage src, Rectangle rect) {
+	      BufferedImage dest = src.getSubimage(rect.x, rect.y, rect.width, rect.height);
+	      return dest; 
 	}
 
 	@Override
@@ -209,6 +225,11 @@ public class Canvas extends JPanel implements Runnable,MouseListener,MouseMotion
 		else if(bh.getSelected()==3) {
 			this.current=new Figura(1,fx,fy,0,bh.getColor(),inx,iny);
 			figuras.add(current);
+		}
+		else if(bh.getSelected()==6) {
+			BufferedImage image = bh.getCanvasImage();
+			this.deleteall();
+			this.Loaded = cropImage(image, new Rectangle(inx,iny,(fx-inx),(fy-iny)));
 		}
 	}
 
