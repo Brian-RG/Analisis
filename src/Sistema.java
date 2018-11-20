@@ -37,17 +37,23 @@ public class Sistema extends JFrame implements WindowListener{
 				if(o[r]=="yes") {
 					b.saveCanvas();
 				}
-				int x=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaño en x(px) del nuevo canvas"));
-				int y=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaño en y(px) del nuevo canvas"));
-				this.remove(c);
-				c=null;
-				System.gc();
-				c= new Canvas(x-5,y-(b.getHeight()+30),b,this);
-				this.remove(b);
-				this.add(b,BorderLayout.NORTH);
-				this.add(c);
-				b.addCanvas(c);
-				this.pack();
+				try {
+					int x=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaño en x(px) del nuevo canvas"));
+					int y=Integer.parseInt(JOptionPane.showInputDialog(this,"Inserta el tamaño en y(px) del nuevo canvas"));
+					this.remove(c);
+					c=null;
+					System.gc();
+					c= new Canvas(x-5,y-(b.getHeight()+30),b,this);
+					this.remove(b);
+					this.add(b,BorderLayout.NORTH);
+					this.add(c);
+					b.addCanvas(c);
+					this.pack();
+				}
+				catch(Exception ex){
+					
+				}
+				
 			}
 
 	}

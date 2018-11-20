@@ -184,9 +184,11 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 			c.SetFondo(k);
 		}
 		else if(e.getSource()==this.CanvasSize) {
+			try {
 			int x=Integer.parseInt(JOptionPane.showInputDialog(this, "Insert X", "Change Canvas Size", 3));
 			int y=Integer.parseInt(JOptionPane.showInputDialog(this, "Insert y", "Change Canvas Size", 3));
-			c.setCanvasSize(x,y);
+			c.setCanvasSize(x,y);}
+			catch(Exception ex) {}
 		}
 		else if(e.getSource()==this.undo) {
 			c.undo();
@@ -279,12 +281,19 @@ public class BarraHerramientas extends JPanel implements ActionListener, ChangeL
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		if((int)this.rot.getValue()==360) {
-			this.rot.setValue(new Integer(0));
+		try {
+			if((int)this.rot.getValue()==360) {
+				this.rot.setValue(new Integer(0));
+			}
+			if(this.c.getCurrent()!=null) {
+				this.c.getCurrent().setRotation((int)this.rot.getValue());
+			}
 		}
-		if(this.c.getCurrent()!=null) {
-			this.c.getCurrent().setRotation((int)this.rot.getValue());
+		
+		catch(Exception ex) {
+			
 		}
+		
 	}
 
 }
